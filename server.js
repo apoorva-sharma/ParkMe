@@ -31,14 +31,6 @@ function handler (req, res) {
          });
    }
 
-   // server function to generate the plan and give it to the client
-   else if (path == '/plan') 
-   {
-      var query = url.parse(req.url).query;
-      res.writeHead(500);
-      return res.end("Feature not implemented");
-   } 
-
    // The main "live view" navigation page
    else if (path == '/navigate') 
    {
@@ -72,6 +64,28 @@ function handler (req, res) {
          res.write('id: ' + id + '\n');
          res.write("data: change" + '\n\n');
       });
+   } 
+
+
+   // server function to generate the plan and give it to the client
+   else if (path == '/plan') 
+   {
+      var query = url.parse(req.url).query;
+      res.writeHead(500);
+      return res.end("Feature not implemented");
+   } 
+
+   // server function to give the current lot state to the client
+   else if (path == '/lot') 
+   {
+      var lot_id = url.parse(req.url).query;
+      var grid = lots[lot_id].m_grid;
+      if (!grid) {
+         res.writeHead(500);
+         return res.end("Unknown Lot Id");
+      }
+      res.writeHead(200);
+      res.end(JSON.stringify(grid));
    } 
 
    // Otherwise, try and follow the file path
