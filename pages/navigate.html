@@ -11,7 +11,12 @@
 		var lotID = 1;
 		var evtSource = new EventSource("status?lot="+lotID);
 
-		var source = "&r=8&c=0";
+		var carR = 8;
+		var carC = 0;
+
+		function source() {
+			return "&r" + "=" + carR + "&c=" + carC;
+		}
 
 		var lot;  //most recent lot from /lot?1
 		var plan; //most recent plan     /plan?1
@@ -28,7 +33,7 @@
 
 		function getPlan() {
 			console.log("getting plan");
-			$.getJSON('plan?lot='+lotID+source, function(data) {
+			$.getJSON('plan?lot='+lotID+source(), function(data) {
 				plan = data;
 				drawPlan();
 			});
@@ -36,7 +41,7 @@
 
 		function getLot() {
 			console.log("getting lot");
-			$.getJSON('lot?lot='+lotID+source, function(data) {
+			$.getJSON('lot?lot='+lotID+source(), function(data) {
 				lot = data;
 				drawLot();
 				getPlan();
@@ -80,18 +85,14 @@
 		}
 
 		function drawPlan() {
-			for(var r = 0; r < nRow; r++) {
-				for(var c = 0; c < nCol; c++) {
-					var id = '#'+r+'-'+c;
-
-					$(id).removeClass('plan');
-				}
-			}
-			console.log(plan);
+			$(".spot.plan").removeClass('up');
+			$(".spot.plan").removeClass('down');
+			$(".spot.plan").removeClass('left');
+			$(".spot.plan").removeClass('right');
+			$(".spot").removeClass('plan');
 
 			plan.forEach(function(p) {
 				var id ='#' + p.r + '-' + p.c;
-				console.log(p);
 				$(id).addClass('plan');
 				$(id).addClass(p.name);
 			});
@@ -106,7 +107,6 @@
 						console.log("no lot...");
 						return; 
 					}
-					console.log(lot[r][c]);
 					switch(lot[r][c]) {
 						case 0:
 							$('#'+id).addClass('free');
@@ -133,6 +133,66 @@
 			getLot();
 		};
 
+
+		///////////////////////////
+		// simulate ///
+		///////////////
+
+		$("button").click(function() {
+			toggleSimulation();
+		});
+
+		var isSimulation = 0;
+		var indexSim = 0;
+
+		function toggleSimulation() {
+			if(!isSimulation) {
+				restartSimulation();
+
+			} else {
+				stopSimulation();
+			}
+			console.log("lets go!")
+		}
+
+		function restartSimulation() {
+			indexSim = 0;
+			isSimulation = true;
+			stepSimulation();
+		}
+
+		function stepSimulation() {
+			if(!isSimulation)
+				return;
+
+			if (plan.length > 0) {
+				deleteCarUI();
+				carR = plan[1].r;
+				carC = plan[1].c;
+				newCarUI();
+			} else {
+				stopSimulation();
+			}
+
+			//indexSim++;
+			getPlan();
+			window.setTimeout(stepSimulation, 500);
+		}
+
+		function stopSimulation() {
+			isSimulation = false;
+		}
+
+		function deleteCarUI() {
+			var id = "#" + carR + '-' + carC;
+			$(id).removeClass('car');
+		}
+
+		function newCarUI() {
+			var id = "#" + carR + '-' + carC;
+			$(id).addClass('car');
+		}
+
 	</script>
 </head>
 <body>
@@ -143,7 +203,7 @@
 		<div id="lot">
 
 		</div>
-		</canvas>
+		<button id="simulate" class="btn btn-a center smooth">Simulate</button>
 	</div>
 	<div class="col c2">&nbsp;</div>
 </div>

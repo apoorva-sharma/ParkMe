@@ -44,6 +44,10 @@ div .spot {
 	content: '\25BA';
 }
 
+.spot.plan.car:after{
+	color: #4ECDC4;
+}
+
 .spot.path{
 }
 
