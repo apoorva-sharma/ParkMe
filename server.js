@@ -116,16 +116,22 @@ function handler (req, res) {
 
       if (!lots[lot_id]) {
          res.writeHead(500);
-         return res.end("invalid request");
+         return res.end("unknown lot id");
       }
 
       var grid = lots[lot_id].m_grid;
-      if (!grid) {
-         res.writeHead(500);
-         return res.end("Unknown Lot Id");
-      }
+
+      var numFree = 0;
+      grid.forEach(function(row) {
+         row.forEach(function(col) {
+            if (col == 0)
+               numFree += 1;
+         });
+      });
+
+      var data = {"grid": grid, "nFree": numFree};
       res.writeHead(200);
-      res.end(JSON.stringify(grid));
+      res.end(JSON.stringify(data));
    } 
 
    // Otherwise, try and follow the file path

@@ -22,6 +22,7 @@
 		var plan; //most recent plan     /plan?1
 		var nRow = 9;
 		var nCol = 20;
+		var nFree = 0;
 
 		var canvasHeight = 500;
 		var canvasWidth  = 900;
@@ -42,7 +43,8 @@
 		function getLot() {
 			console.log("getting lot");
 			$.getJSON('lot?lot='+lotID+source(), function(data) {
-				lot = data;
+				lot = data.grid;
+				nFree = data.nFree;
 				drawLot();
 				getPlan();
 			});
@@ -123,6 +125,8 @@
 					}
 				}
 			}
+
+			$("#nEmptySpots").text(nFree);
 		}
 
 		$(document).ready(init);
@@ -213,6 +217,7 @@
 		<button id="simulate" class="btn btn-sm btn-a center smooth" style="position:relative; top:61px;"onclick="toggleSimulation();">(Simulate)</button>
 
 	</div>
+	<div class="col c1">&nbsp;</div>
 </div>
 </body>
 </html>
