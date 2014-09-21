@@ -4,6 +4,38 @@
 	<title>ParkMe</title>
 	<link rel="stylesheet" type="text/css" href="css/min.css" />
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<script>
+		var lotID = 1;
+		var evtSource = new EventSource("status?"+lotID);
+
+		var lot;  //most recent lot from /lot?1
+		var plan; //most recent plan     /plan?1
+		var nRow = 0;
+		var nCol = 0;
+
+		var canvasHeight = 500;
+		var canvasWidth  = 900;
+
+		var cellHeight = 5;
+		var cellWidth = 5;
+
+		evtSource.onmessage = function(e) {
+			draw();
+			lot = e;
+		};
+
+		function draw() {
+			for(var i = 0; i < nRow; i++) {
+				for(var j = 0; j < nCol; j++) {
+					// plot at (row,col) = (i,j) 
+
+					// draw at i*
+
+				}
+			}
+		}
+
+	</script>
 </head>
 <body>
 <div class="row">
