@@ -17,7 +17,7 @@ div#lot {
 }
 
 .spot.taken{
-	background-color: #FF6B6B;
+	background: url("img/car.png") #FF6B6B;
 }
 
 .spot.road{
