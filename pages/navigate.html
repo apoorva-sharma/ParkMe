@@ -4,14 +4,15 @@
 	<title>ParkMe</title>
 	<link rel="stylesheet" type="text/css" href="css/min.css" />
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<link rel="stylesheet" type="text/css" href="css/lot.css" />
 	<script>
 		var lotID = 1;
 		var evtSource = new EventSource("status?"+lotID);
 
 		var lot;  //most recent lot from /lot?1
 		var plan; //most recent plan     /plan?1
-		var nRow = 0;
-		var nCol = 0;
+		var nRow = 10;
+		var nCol = 10;
 
 		var canvasHeight = 500;
 		var canvasWidth  = 900;
@@ -19,21 +20,81 @@
 		var cellHeight = 5;
 		var cellWidth = 5;
 
+		var lotDiv;
+
+
 		evtSource.onmessage = function(e) {
-			draw();
-			lot = e;
+			getLot();
+
+			drawLot();
 		};
 
-		function draw() {
+
+		function getLot() {
+			request = new XMLHttpRequest();
+			request.open('GET', 'lot?'+lotID, true);
+
+			request.onload = function() {
+  				if (request.status >= 200 && request.status < 400){
+    				// Success!
+    				data = JSON.parse(request.responseText);
+    				console.log(data);
+ 		 		} else {
+    				// We reached our target server, but it returned an error
+
+  				}
+			};
+
+			request.onerror = function() {
+ 	 		// There was a connection error of some sort
+			};
+		
+			request.send();
+		};
+
+		function init() {
+
+			lotDiv = document.getElementById("lot");
+			console.log("hello");
+
+			//make every div
+			for(var i = 0; i < nRow; i++) {
+				var rDiv = document.createElement('div');
+				rDiv.id = "row"+i;
+				rDiv.className = "lotrow";
+
+
+				// make a row
+				for(var j = 0; j < nCol; j++) {
+					var cDiv = document.createElement('div');
+					cDiv.id = i+'-'+j;
+					cDiv.className = "spot free";
+
+					rDiv.appendChild(cDiv);
+					console.log(i);
+				}
+				var clearDiv = document.createElement('div');
+				clearDiv.className = "clearrow";
+				rDiv.appendChild(clearDiv);
+
+				lotDiv.appendChild(rDiv);
+			}
+
+			draw();
+		}
+		function drawLot() {
 			for(var i = 0; i < nRow; i++) {
 				for(var j = 0; j < nCol; j++) {
-					// plot at (row,col) = (i,j) 
+					var id = i+'-'+j;
+					var spot = document.getElementById(id);
 
-					// draw at i*
-
+					var text = document.createTextNode(id);
+					spot.appendChild(text);
 				}
 			}
 		}
+
+		window.onload = init; 
 
 	</script>
 </head>
@@ -42,7 +103,9 @@
 	<div class="col c2">&nbsp;</div>
 	<div class="col c8 content">
 		<h1 class="head">Park<span class="light">Me</span></h1>
-		<canvas id="lotCanvas" width="900" height="500" style="border:1px solid #000000;">
+		<div id="lot">
+
+		</div>
 		</canvas>
 	</div>
 	<div class="col c2">&nbsp;</div>
