@@ -5,14 +5,16 @@
 	<link rel="stylesheet" type="text/css" href="css/min.css" />
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
 	<link rel="stylesheet" type="text/css" href="css/lot.css" />
-	<script>
+	<script type="text/javascript" src="js/jquery.js" > </script>
+
+	<script type="text/javascript">
 		var lotID = 1;
 		var evtSource = new EventSource("status?"+lotID);
 
 		var lot;  //most recent lot from /lot?1
 		var plan; //most recent plan     /plan?1
-		var nRow = 10;
-		var nCol = 10;
+		var nRow = 9;
+		var nCol = 20;
 
 		var canvasHeight = 500;
 		var canvasWidth  = 900;
@@ -23,40 +25,30 @@
 		var lotDiv;
 
 
-		evtSource.onmessage = function(e) {
-			getLot();
-
-			drawLot();
-		};
-
+		function getPath() {
+			console.log("getting lot");
+			$.getJSON('path?'+lotID, function(data) {
+				path = data;
+				drawPath();
+			});
+		}
 
 		function getLot() {
-			request = new XMLHttpRequest();
-			request.open('GET', 'lot?'+lotID, true);
-
-			request.onload = function() {
-  				if (request.status >= 200 && request.status < 400){
-    				// Success!
-    				data = JSON.parse(request.responseText);
-    				console.log(data);
- 		 		} else {
-    				// We reached our target server, but it returned an error
-
-  				}
-			};
-
-			request.onerror = function() {
- 	 		// There was a connection error of some sort
-			};
-		
-			request.send();
+			console.log("getting lot");
+			$.getJSON('lot?'+lotID, function(data) {
+				lot = data;
+				drawLot();
+			});
+			console.log("got lot");
 		};
 
 		function init() {
+			getLot();
 
 			lotDiv = document.getElementById("lot");
 			console.log("hello");
 
+			var widthPercentage = 0.99/(nCol+1)*100;
 			//make every div
 			for(var i = 0; i < nRow; i++) {
 				var rDiv = document.createElement('div');
@@ -68,10 +60,12 @@
 				for(var j = 0; j < nCol; j++) {
 					var cDiv = document.createElement('div');
 					cDiv.id = i+'-'+j;
-					cDiv.className = "spot free";
+					cDiv.className = "spot";
 
+					$(cDiv).width(widthPercentage+"%");
 					rDiv.appendChild(cDiv);
-					console.log(i);
+
+
 				}
 				var clearDiv = document.createElement('div');
 				clearDiv.className = "clearrow";
@@ -80,21 +74,44 @@
 				lotDiv.appendChild(rDiv);
 			}
 
-			draw();
+			drawLot();
 		}
-		function drawLot() {
-			for(var i = 0; i < nRow; i++) {
-				for(var j = 0; j < nCol; j++) {
-					var id = i+'-'+j;
-					var spot = document.getElementById(id);
 
-					var text = document.createTextNode(id);
-					spot.appendChild(text);
+		function drawLot() {
+			for(var r = 0; r < nRow; r++) {
+				for(var c = 0; c < nCol; c++) {
+					var id = r+'-'+c;
+
+					if(!lot) {
+						console.log("no lot...");
+						return; 
+					}
+					console.log(lot[r][c]);
+					switch(lot[r][c]) {
+						case 0:
+							$('#'+id).addClass('free');
+							$('#'+id).removeClass('taken');
+							break;
+						case 1:
+							$('#'+id).addClass('taken');
+							$('#'+id).removeClass('free');
+							break;
+					}
+
+					if(lot[r][c] == '-1') {
+						$('#'+id).addClass('road');
+					}
 				}
 			}
 		}
 
-		window.onload = init; 
+		$(document).ready(init);
+
+		evtSource.onmessage = function(e) {
+			console.log("changed!");
+
+			getLot();
+		};
 
 	</script>
 </head>
