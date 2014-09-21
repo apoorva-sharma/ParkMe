@@ -5,7 +5,8 @@
 var port = process.env.PORT || 5000;
 var app = require('http').createServer(handler).listen(port)
   , fs = require('fs')
-  , url = require('url');
+  , url = require('url')
+  , querystring = require('querystring');
 
 var Lot = require('./lib/lot').Lot;
 
@@ -51,7 +52,19 @@ function handler (req, res) {
    // id is passed as the query (e.g. /status?1);
    else if (path == '/status') 
    {
-      var lot_id = url.parse(req.url).query;
+      var query = querystring.parse(url.parse(req.url).query);
+      console.log(query);
+      var lot_id = query.lot;
+      if (!lot_id) {
+         res.writeHead(500);
+         return res.end("invalid request");
+      }
+
+      if (!lots[lot_id]) {
+         res.writeHead(500);
+         return res.end("invalid request");
+      }
+
       res.writeHead(200, {
          'Content-Type': 'text/event-stream',
          'Cache-Control': 'no-cache',
@@ -72,14 +85,25 @@ function handler (req, res) {
    // server function to generate the plan and give it to the client
    else if (path == '/plan') 
    {
-      var lot_id = url.parse(req.url).query;
-      var source = {"r":8,"c":0,"h":0};
+      var query = querystring.parse(url.parse(req.url).query);
+      console.log(query);
+      var lot_id = query.lot;
+      var r = query.r;
+      var c = query.c;
+
+      if (!lot_id || !r || !c) {
+         res.writeHead(500);
+         return res.end("invalid request");
+      }
+
+      if (!lots[lot_id]) {
+         res.writeHead(500);
+         return res.end("invalid request");
+      }
+
+      var source = {"r":r,"c":c};
       var grid = lots[lot_id].m_grid;
       var path = Planner.plan(source,grid);
-      if (path.length == 0) {
-         res.writeHead(505);
-         return res.end("Path not found (in lot)");
-      }
       res.writeHead(200);
       res.end(JSON.stringify(path));
    } 
@@ -87,7 +111,14 @@ function handler (req, res) {
    // server function to give the current lot state to the client
    else if (path == '/lot') 
    {
-      var lot_id = url.parse(req.url).query;
+      var query = querystring.parse(url.parse(req.url).query);
+      var lot_id = query.lot;
+
+      if (!lots[lot_id]) {
+         res.writeHead(500);
+         return res.end("invalid request");
+      }
+
       var grid = lots[lot_id].m_grid;
       if (!grid) {
          res.writeHead(500);
