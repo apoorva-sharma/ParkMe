@@ -19,7 +19,7 @@
 		}
 
 		var lot;  //most recent lot from /lot?1
-		var plan; //most recent plan     /plan?1
+		var plan =[]; //most recent plan     /plan?1
 		var nRow = 9;
 		var nCol = 20;
 		var nFree = 0;
@@ -46,7 +46,9 @@
 				lot = data.grid;
 				nFree = data.nFree;
 				drawLot();
-				getPlan();
+				if(plan.length>0) {
+					getPlan();
+				}
 			});
 			console.log("got lot");
 		};
@@ -57,7 +59,7 @@
 			lotDiv = document.getElementById("lot");
 			console.log("hello");
 
-			var widthPercentage = 0.99/(nCol+1)*100;
+			var widthPercentage = 0.95/(nCol+1)*100;
 			//make every div
 			for(var i = 0; i < nRow; i++) {
 				var rDiv = document.createElement('div');
@@ -156,7 +158,8 @@
 			} else {
 				stopSimulation();
 			}
-			console.log("lets go!")
+			console.log("lets go!");
+			getPlan();
 		}
 
 		function restartSimulation() {
@@ -214,7 +217,7 @@
 
 		</div>
 
-		<button id="simulate" class="btn btn-sm btn-a center smooth" style="position:relative; top:61px;"onclick="toggleSimulation();">(Simulate)</button>
+		<button id="simulate" class="btn btn-sm btn-a center smooth" onclick="toggleSimulation();">(Simulate)</button>
 
 	</div>
 	<div class="col c1">&nbsp;</div>
