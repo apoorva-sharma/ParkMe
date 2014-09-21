@@ -4,14 +4,33 @@
 	<title>ParkMe</title>
 	<link rel="stylesheet" type="text/css" href="css/min.css" />
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<script type="text/javascript" src="js/jquery.js" > </script>
+
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('.homesplash img').bind('fade-cycle', function() {
+			    $(this).animate({'opacity':0.4}, 2000, function() {
+			        $(this).animate({'opacity':1.0}, 2000, function() {
+			            $(this).trigger('fade-cycle');
+			        });
+			    });
+			});
+
+		$('.homesplash img').trigger('fade-cycle');
+	});
+	</script>
 </head>
 <body>
-<div class="row">
+<div class="row home">
 	<div class="col c2">&nbsp;</div>
 	<div class="col c8 content">
 		<h1 class="head">Park<span class="light">Me</span></h1>
-		<h2 class="subhead">Find the perfect spot. <emph>Painlessly.</emph></h2>
-		<a href="navigate" class="btn btn-a center smooth">Find a Spot!</a>
+		<h2 class="subhead">Find the <b>perfect spot</b>. With ease.</h2>
+		<div class="homesplash" style="background: url(img/splash.png) no-repeat;">
+		<img src="img/wifis.png">
+		</div>
+
+		<a href="navigate" class="btn btn-a center smooth">Find a Spot Near You</a>
 	</div>
 	<div class="col c2">&nbsp;</div>
 </div>

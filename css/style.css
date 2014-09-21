@@ -12,6 +12,7 @@ h1 {
 
 .subhead {
 	font-weight: 300;
+	margin-bottom: 2em;
 }
 
 .subhead emph {
@@ -43,4 +44,14 @@ h1 {
 .sidebar img {
 	width: 98%;
 	margin-top: 130px;
+}
+
+.home {
+	position:relative;
+}
+
+.home .content .btn {
+	position:absolute;
+	top:375px;
+	left:55%;
 }
