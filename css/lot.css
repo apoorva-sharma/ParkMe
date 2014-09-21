@@ -19,13 +19,29 @@ div .spot {
 	background-color: #556270;
 }
 
-.spot.road.path:after{
+.spot.plan:after{
 	text-align: center;
-	width: 100%;
-	margin: 12px auto;
+	margin: 20px auto;
 	display: block;
     content: ' \25CF';
-    font-size: 30px;
+    font-size: 20px;
+    color: #FFF;
+}
+
+.spot.plan.up:after{
+    content: '\25B2';
+}
+
+.spot.plan.down:after{
+	content: '\25BC';
+}
+
+.spot.plan.left:after{
+	content: '\25C0';
+}
+
+.spot.plan.right:after{
+	content: '\25BA';
 }
 
 .spot.path{

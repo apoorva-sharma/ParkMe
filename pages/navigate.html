@@ -9,7 +9,9 @@
 
 	<script type="text/javascript">
 		var lotID = 1;
-		var evtSource = new EventSource("status?"+lotID);
+		var evtSource = new EventSource("status?lot="+lotID);
+
+		var source = "&r=8&c=0";
 
 		var lot;  //most recent lot from /lot?1
 		var plan; //most recent plan     /plan?1
@@ -24,19 +26,20 @@
 
 		var lotDiv;
 
-		function getPath() {
-			console.log("getting lot");
-			$.getJSON('path?'+lotID, function(data) {
-				path = data;
-				drawPath();
+		function getPlan() {
+			console.log("getting plan");
+			$.getJSON('plan?lot='+lotID+source, function(data) {
+				plan = data;
+				drawPlan();
 			});
 		}
 
 		function getLot() {
 			console.log("getting lot");
-			$.getJSON('lot?'+lotID, function(data) {
+			$.getJSON('lot?lot='+lotID+source, function(data) {
 				lot = data;
 				drawLot();
+				getPlan();
 			});
 			console.log("got lot");
 		};
@@ -74,6 +77,24 @@
 			}
 
 			drawLot();
+		}
+
+		function drawPlan() {
+			for(var r = 0; r < nRow; r++) {
+				for(var c = 0; c < nCol; c++) {
+					var id = '#'+r+'-'+c;
+
+					$(id).removeClass('plan');
+				}
+			}
+			console.log(plan);
+
+			plan.forEach(function(p) {
+				var id ='#' + p.r + '-' + p.c;
+				console.log(p);
+				$(id).addClass('plan');
+				$(id).addClass(p.name);
+			});
 		}
 
 		function drawLot() {
