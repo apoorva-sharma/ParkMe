@@ -9,6 +9,8 @@ var app = require('http').createServer(handler).listen(port)
 
 var Lot = require('./lib/lot').Lot;
 
+var Planner = require('./lib/planner.js');
+
 // map with id -> Lot with the id
 var lot1 = new Lot(1);
 var lots = {1: lot1};
@@ -70,9 +72,16 @@ function handler (req, res) {
    // server function to generate the plan and give it to the client
    else if (path == '/plan') 
    {
-      var query = url.parse(req.url).query;
-      res.writeHead(500);
-      return res.end("Feature not implemented");
+      var lot_id = url.parse(req.url).query;
+      var source = {"r":8,"c":0,"h":0};
+      var grid = lots[lot_id].m_grid;
+      var path = Planner.plan(source,grid);
+      if (path.length == 0) {
+         res.writeHead(505);
+         return res.end("Path not found (in lot)");
+      }
+      res.writeHead(200);
+      res.end(JSON.stringify(path));
    } 
 
    // server function to give the current lot state to the client
